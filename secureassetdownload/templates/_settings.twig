@@ -1,0 +1,13 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textField({
+  label: "Encryption Key"|t,
+  id: 'encryptionKey',
+  name: 'encryptionKey',
+  instructions: "Key used when encrypting URLs."|t,
+  value: settings.encryptionKey,
+  autofocus: true,
+  first: true,
+  required: true,
+  errors: ''
+}) }}
