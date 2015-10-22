@@ -50,11 +50,30 @@ class SecureAssetDownloadService extends BaseApplicationComponent
 				}
 			}
 
-			$client = new \Guzzle\Http\Client();
-			$response = $client->get($this->_asset->url)->send();
+			$sendFile = false;
+			if ($this->_asset->source->type == 'Local') {
 
-			if ($response->isSuccessful()) {
-				craft()->request->sendFile($this->_asset->url, $response->getBody(), array('forceDownload' => true));
+				$path = $this->_asset->source->sourceType->getBasePath().$this->_asset->filename;
+				if (IOHelper::fileExists($path)) {
+					$content = IOHelper::getFileContents($path);
+					$sendFile = true;
+				}
+
+			} else {
+				$path = $this->_asset->url;
+
+				$client = new \Guzzle\Http\Client();
+				$response = $client->get($this->_asset->url)->send();
+
+				if ($response->isSuccessful()) {
+					$content = $response->getBody();
+					$sendFile = true;
+				}
+			}
+
+
+			if ($sendFile) {
+				craft()->request->sendFile($path, $content, array('forceDownload' => true));
 			} else {
 				throw new Exception(Craft::t("Unable to serve file"));
 			}
