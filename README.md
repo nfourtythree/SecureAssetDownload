@@ -1,7 +1,7 @@
 # Secure Asset Download
 #### Version 1.0.0
 
-Secure Asset Download is a simple Craft CMS plugin that allows assets to be downloaded via secured URLs
+Secure Asset Download is a simple Craft CMS plugin allowing you, from your templates, to generate download URLs for specified assets that are only available to certain users/groups
 
 ## Installing
 
