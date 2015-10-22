@@ -40,7 +40,7 @@ _note_: Options are *AND* logic
 } %}
 ```
 
-#### Secure for any users in specifc group  ####
+#### Secure for any user in specifc group  ####
 
 ```
 {% set options = {
@@ -49,7 +49,7 @@ _note_: Options are *AND* logic
 } %}
 ```
 
-#### Secure for any users any specified group  ####
+#### Secure for any user any specified group  ####
 
 ```
 {% set options = {
