@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.0.2",
+        "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/1.0.2.zip",
+        "date": "2016-07-27T11:05:00.111Z",
+        "notes": [
+            "[Fixed] Releases links"
+        ]
+    },
+    {
         "version": "1.0.1",
         "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/1.0.1.zip",
         "date": "2016-07-27T10:57:00.111Z",
