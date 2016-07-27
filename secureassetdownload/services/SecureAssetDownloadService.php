@@ -53,7 +53,10 @@ class SecureAssetDownloadService extends BaseApplicationComponent
 			$sendFile = false;
 			if ($this->_asset->source->type == 'Local') {
 
-				$path = $this->_asset->source->sourceType->getBasePath().$this->_asset->filename;
+				$sourcePath = $this->_asset->source->sourceType->getBasePath();
+				$folderPath = $this->_asset->getFolder()->path;
+				$path = $sourcePath.$folderPath.$this->_asset->filename;
+				
 				if (IOHelper::fileExists($path)) {
 					$content = IOHelper::getFileContents($path);
 					$sendFile = true;
