@@ -1,7 +1,7 @@
 [
     {
         "version": "1.0.1",
-        "downloadUrl": "https://github.com/nfourtythree/craft-entriessubset/archive/1.0.1.zip",
+        "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/1.0.1.zip",
         "date": "2016-07-27T10:57:00.111Z",
         "notes": [
             "[Fixed] Serving from subfolders on local sources",
@@ -10,7 +10,7 @@
     },
     {
         "version": "1.0.1",
-        "downloadUrl": "https://github.com/nfourtythree/craft-entriessubset/archive/master.zip",
+        "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/master.zip",
         "date": "2015-10-22T10:17:00.111Z",
         "notes": [
             "Initial Release"
