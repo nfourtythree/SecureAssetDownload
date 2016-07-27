@@ -24,6 +24,16 @@ class SecureAssetDownloadPlugin extends BasePlugin
 		return 'http://n43.me';
 	}
 
+	public function getDocumentationUrl()
+	{
+			return 'https://github.com/nfourtythree/SecureAssetDownload/blob/master/README.md';
+	}
+
+	public function getReleaseFeedUrl()
+	{
+			return 'https://raw.githubusercontent.com/nfourtythree/SecureAssetDownload/master/releases.json';
+	}
+
 	public function hasCpSection()
 	{
 		return false;

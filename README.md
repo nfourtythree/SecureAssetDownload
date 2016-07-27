@@ -76,5 +76,4 @@ _note_: Options are *AND* logic
 
 ## Changelog
 
-* 1.0
-	* Initial release
+[See Releases](https://github.com/nfourtythree/SecureAssetDownload/releases)
