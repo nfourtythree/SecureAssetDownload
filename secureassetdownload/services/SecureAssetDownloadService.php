@@ -4,182 +4,182 @@ namespace Craft;
 class SecureAssetDownloadService extends BaseApplicationComponent
 {
 
-	protected $_asset;
-	protected $_currentUser;
+  protected $_asset;
+  protected $_currentUser;
 
-	public function getUrl($criteria)
-	{
-		if (isset($criteria['asset'])) {
-			if (!$criteria['asset'] instanceof AssetFileModel) {
-				$criteria['asset'] = craft()->assets->getFileById($criteria['asset']);
+  public function getUrl($criteria)
+  {
+    if (isset($criteria['asset'])) {
+      if (!$criteria['asset'] instanceof AssetFileModel) {
+        $criteria['asset'] = craft()->assets->getFileById($criteria['asset']);
 
-				if (!$criteria['asset']) {
-					return null;
-				}
-			}
+        if (!$criteria['asset']) {
+          return null;
+        }
+      }
 
-			if ($criteria['asset']->url) {
-				$options = [
-					'id' => $criteria['asset']->id,
-					'url' => $criteria['asset']->url,
-					'userId' => (isset($criteria['userId']) ? $criteria['userId'] : null),
-				];
+      if ($criteria['asset']->filename) {
+        $options = [
+          'id' => $criteria['asset']->id,
+          'filename' => $criteria['asset']->filename,
+          'userId' => (isset($criteria['userId']) ? $criteria['userId'] : null),
+        ];
 
-				if (isset($criteria['userGroupId'])) {
-					craft()->requireEdition(Craft::Pro);
-					$options['userGroupId'] = $criteria['userGroupId'];
-				}
+        if (isset($criteria['userGroupId'])) {
+          craft()->requireEdition(Craft::Pro);
+          $options['userGroupId'] = $criteria['userGroupId'];
+        }
 
-				$urlParam = $this->encodeUrlParam($options);
+        $urlParam = $this->encodeUrlParam($options);
 
-				return UrlHelper::getSiteUrl('secureAssetDownload/' . $urlParam);
-			}
-		}
+        return UrlHelper::getSiteUrl('secureAssetDownload/' . $urlParam);
+      }
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	public function serveAsset(array $options = array())
-	{
-		if (isset($options['id'])) {
-			if (!$this->_asset or $this->_asset->id != $options['id'] or !$this->_asset instanceof AssetFileModel) {
-				$this->_asset = craft()->asset->getFileById($options['id']);
+  public function serveAsset(array $options = array())
+  {
+    if (isset($options['id'])) {
+      if (!$this->_asset or $this->_asset->id != $options['id'] or !$this->_asset instanceof AssetFileModel) {
+        $this->_asset = craft()->asset->getFileById($options['id']);
 
-				if (!$this->_asset) {
-					throw new Exception(Craft::t("Unable to find asset"));
-				}
-			}
+        if (!$this->_asset) {
+          throw new Exception(Craft::t("Unable to find asset"));
+        }
+      }
 
-			$sendFile = false;
-			if ($this->_asset->source->type == 'Local') {
+      $sendFile = false;
+      if ($this->_asset->source->type == 'Local') {
 
-				$sourcePath = $this->_asset->source->sourceType->getBasePath();
-				$folderPath = $this->_asset->getFolder()->path;
-				$path = $sourcePath.$folderPath.$this->_asset->filename;
-				
-				if (IOHelper::fileExists($path)) {
-					$content = IOHelper::getFileContents($path);
-					$sendFile = true;
-				}
+        $sourcePath = $this->_asset->source->sourceType->getBasePath();
+        $folderPath = $this->_asset->getFolder()->path;
+        $path = $sourcePath.$folderPath.$this->_asset->filename;
 
-			} else {
-				$path = $this->_asset->url;
+        if (IOHelper::fileExists($path)) {
+          $content = IOHelper::getFileContents($path);
+          $sendFile = true;
+        }
 
-				$client = new \Guzzle\Http\Client();
-				$response = $client->get($this->_asset->url)->send();
+      } else {
+        $path = $this->_asset->url;
 
-				if ($response->isSuccessful()) {
-					$content = $response->getBody();
-					$sendFile = true;
-				}
-			}
+        $client = new \Guzzle\Http\Client();
+        $response = $client->get($this->_asset->url)->send();
+
+        if ($response->isSuccessful()) {
+          $content = $response->getBody();
+          $sendFile = true;
+        }
+      }
 
 
-			if ($sendFile) {
-				craft()->request->sendFile($path, $content, array('forceDownload' => true));
-			} else {
-				throw new Exception(Craft::t("Unable to serve file"));
-			}
-		}
-	}
+      if ($sendFile) {
+        craft()->request->sendFile($path, $content, array('forceDownload' => true));
+      } else {
+        throw new Exception(Craft::t("Unable to serve file"));
+      }
+    }
+  }
 
-	public function isDownloadAllowed(array $options = array())
-	{
-		if (isset($options['id'])) {
-			$this->_asset = craft()->assets->getFileById($options['id']);
+  public function isDownloadAllowed(array $options = array())
+  {
+    if (isset($options['id'])) {
+      $this->_asset = craft()->assets->getFileById($options['id']);
 
-			if (!$this->_asset) {
-				return false;
-			}
+      if (!$this->_asset) {
+        return false;
+      }
 
-			if (!craft()->userSession->isLoggedIn()) {
-				return false;
-			}
+      if (!craft()->userSession->isLoggedIn()) {
+        return false;
+      }
 
-			// User related checks
-			$this->_currentUser = craft()->userSession->getUser();
+      // User related checks
+      $this->_currentUser = craft()->userSession->getUser();
 
-			if (!$this->_currentUser) {
-				return false;
-			}
+      if (!$this->_currentUser) {
+        return false;
+      }
 
-			if ($this->_currentUser->admin) {
-				return true;
-			}
+      if ($this->_currentUser->admin) {
+        return true;
+      }
 
-			if (isset($options['userId']) and $options['userId']) {
-				if (!$this->_checkInArray($this->_currentUser->id, $options['userId'])) {
-					return false;
-				}
-			}
+      if (isset($options['userId']) and $options['userId']) {
+        if (!$this->_checkInArray($this->_currentUser->id, $options['userId'])) {
+          return false;
+        }
+      }
 
-			if (isset($options['userGroupId']) and $options['userGroupId']) {
-				$usersGroupIds = array_keys($this->_currentUser->getGroups('id'));
+      if (isset($options['userGroupId']) and $options['userGroupId']) {
+        $usersGroupIds = array_keys($this->_currentUser->getGroups('id'));
 
-				if (!$usersGroupIds) {
-					return false;
-				}
+        if (!$usersGroupIds) {
+          return false;
+        }
 
-				$_returnGroupIdCheck = true;
-				foreach ($usersGroupIds as $_groupId) {
-					if (!$this->_checkInArray($_groupId, $options['userGroupId'])) {
-						$_returnGroupIdCheck = false;
-					}
-				}
+        $_returnGroupIdCheck = true;
+        foreach ($usersGroupIds as $_groupId) {
+          if (!$this->_checkInArray($_groupId, $options['userGroupId'])) {
+            $_returnGroupIdCheck = false;
+          }
+        }
 
-				if (!$_returnGroupIdCheck) {
-					return false;
-				}
+        if (!$_returnGroupIdCheck) {
+          return false;
+        }
 
-			}
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		return false;
-	}
+    return false;
+  }
 
-	private function _checkInArray($needle, $haystack)
-	{
-		if (!is_array($haystack)) {
-			$haystack = array($haystack);
-		}
+  private function _checkInArray($needle, $haystack)
+  {
+    if (!is_array($haystack)) {
+      $haystack = array($haystack);
+    }
 
-		if (!in_array($needle, $haystack)) {
-			return false;
-		}
+    if (!in_array($needle, $haystack)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	public function encodeUrlParam($options = array())
-	{
-		$optionsString = serialize($options);
+  public function encodeUrlParam($options = array())
+  {
+    $optionsString = serialize($options);
 
-		$url = $this->encrypt($optionsString);
+    $url = $this->encrypt($optionsString);
 
-		return $url;
-	}
+    return $url;
+  }
 
-	public function decodeUrlParam($optionsString = "")
-	{
-		$optionsString = $this->decrypt($optionsString);
+  public function decodeUrlParam($optionsString = "")
+  {
+    $optionsString = $this->decrypt($optionsString);
 
-		$options = unserialize($optionsString);
+    $options = unserialize($optionsString);
 
-		return $options;
-	}
+    return $options;
+  }
 
-	protected function encrypt($string)
-	{
-		$key = craft()->plugins->getPlugin("secureAssetDownload")->getSettings()->encryptionKey;
-	    return rtrim(strtr(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key)))), '+/', '-_'), '=');
-	}
+  protected function encrypt($string)
+  {
+    $key = craft()->plugins->getPlugin("secureAssetDownload")->getSettings()->encryptionKey;
+      return rtrim(strtr(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key)))), '+/', '-_'), '=');
+  }
 
-	protected function decrypt($string)
-	{
-		$key = craft()->plugins->getPlugin("secureAssetDownload")->getSettings()->encryptionKey;
-	    return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode(str_pad(strtr($string, '-_', '+/'), strlen($string) % 4, '=', STR_PAD_RIGHT)), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
-	}
+  protected function decrypt($string)
+  {
+    $key = craft()->plugins->getPlugin("secureAssetDownload")->getSettings()->encryptionKey;
+      return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode(str_pad(strtr($string, '-_', '+/'), strlen($string) % 4, '=', STR_PAD_RIGHT)), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+  }
 
 }

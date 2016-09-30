@@ -1,5 +1,13 @@
 [
     {
+        "version": "1.0.3",
+        "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/1.0.2.zip",
+        "date": "2016-07-27T11:05:00.111Z",
+        "notes": [
+            "[Fixed] Issue with links not generating for assets with public urls turned off"
+        ]
+    },
+    {
         "version": "1.0.2",
         "downloadUrl": "https://github.com/nfourtythree/SecureAssetDownload/archive/1.0.2.zip",
         "date": "2016-07-27T11:05:00.111Z",
@@ -13,7 +21,7 @@
         "date": "2016-07-27T10:57:00.111Z",
         "notes": [
             "[Fixed] Serving from subfolders on local sources",
-						"[Added] Releases JSON"
+            "[Added] Releases JSON"
         ]
     },
     {
