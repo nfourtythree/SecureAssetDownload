@@ -23,6 +23,7 @@ class SecureAssetDownloadService extends BaseApplicationComponent
           'id' => $criteria['asset']->id,
           'filename' => $criteria['asset']->filename,
           'userId' => (isset($criteria['userId']) ? $criteria['userId'] : null),
+          'forceDownload' => ( isset( $criteria['forceDownload'] ) ? $criteria['forceDownload'] : true ),
         ];
 
         if (isset($criteria['userGroupId'])) {
@@ -76,7 +77,13 @@ class SecureAssetDownloadService extends BaseApplicationComponent
 
 
       if ($sendFile) {
-        craft()->request->sendFile($path, $content, array('forceDownload' => true));
+        if (isset($options['forceDownload']) and !$options['forceDownload']) {
+          $extraParams = array('forceDownload' => false);
+        } else {
+          $extraParams = array('forceDownload' => true);
+        }
+
+        craft()->request->sendFile($path, $content, $extraParams);
       } else {
         throw new Exception(Craft::t("Unable to serve file"));
       }

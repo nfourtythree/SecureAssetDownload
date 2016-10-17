@@ -1,5 +1,5 @@
 # Secure Asset Download
-#### Version 1.0.0
+#### Version 1.1.0
 
 Secure Asset Download is a simple Craft CMS plugin allowing you, from your templates, to generate download URLs for specified assets that are only available to certain users/groups
 
@@ -22,9 +22,10 @@ Admins have access to all generated URLs regardless of options
 
 ```
 {
-	asset: id or AssetFileModel, // e.g 14 or craft.asset.id(23).first()
-	userId: id or array of user ids, // e.g. 6 or [ 17, 28, 30 ]
-	userGroupId: id or array of user group ids, // e.g. 3 or [ 1, 99, 76 ]
+  asset: id or AssetFileModel, // e.g 14 or craft.asset.id(23).first()
+  userId: id or array of user ids, // e.g. 6 or [ 17, 28, 30 ]
+  userGroupId: id or array of user group ids, // e.g. 3 or [ 1, 99, 76 ]
+  forceDownload: true or false, // Optional field to force the download rather than opening in the tab (default: true)
 }
 ```
 
@@ -36,7 +37,7 @@ _note_: Options are *AND* logic
 
 ```
 {% set options = {
-	asset: 17
+  asset: 17
 } %}
 ```
 
@@ -44,8 +45,8 @@ _note_: Options are *AND* logic
 
 ```
 {% set options = {
-	asset: 17,
-	userGroupId: 2
+  asset: 17,
+  userGroupId: 2
 } %}
 ```
 
@@ -53,8 +54,8 @@ _note_: Options are *AND* logic
 
 ```
 {% set options = {
-	asset: 17,
-	userGroupId: [ 2, 6 ]
+  asset: 17,
+  userGroupId: [ 2, 6 ]
 } %}
 ```
 
@@ -62,8 +63,17 @@ _note_: Options are *AND* logic
 
 ```
 {% set options = {
-	asset: 17,
-	userId: [ 46, 86 ]
+  asset: 17,
+  userId: [ 46, 86 ]
+} %}
+```
+
+#### Secure for all users, don't force download  ####
+
+```
+{% set options = {
+  asset: 17,
+  forceDownload: false
 } %}
 ```
 

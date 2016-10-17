@@ -11,7 +11,7 @@ class SecureAssetDownloadPlugin extends BasePlugin
 
   function getVersion()
   {
-    return '1.0.3';
+    return '1.1.0';
   }
 
   function getDeveloper()
