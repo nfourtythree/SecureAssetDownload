@@ -44,7 +44,7 @@ class SecureAssetDownloadService extends BaseApplicationComponent
   {
     if (isset($options['id'])) {
       if (!$this->_asset or $this->_asset->id != $options['id'] or !$this->_asset instanceof AssetFileModel) {
-        $this->_asset = craft()->asset->getFileById($options['id']);
+        $this->_asset = craft()->assets->getFileById($options['id']);
 
         if (!$this->_asset) {
           throw new Exception(Craft::t("Unable to find asset"));
