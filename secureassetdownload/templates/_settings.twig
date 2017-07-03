@@ -11,3 +11,14 @@
   required: true,
   errors: ''
 }) }}
+{{ forms.textField({
+  label: "Time"|t,
+  id: 'timeKey',
+  name: 'timeKey',
+  instructions: "Global Time for one-time-downloads"|t,
+  value: settings.timeKey,
+  autofocus: true,
+  first: true,
+  required: true,
+  errors: ''
+}) }}

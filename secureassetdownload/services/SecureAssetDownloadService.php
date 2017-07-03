@@ -31,6 +31,12 @@ class SecureAssetDownloadService extends BaseApplicationComponent
           $options['userGroupId'] = $criteria['userGroupId'];
         }
 
+        $options['onetime'] = (isset($criteria['onetime']) ? $criteria['onetime'] : false);
+        if ($options['onetime']) {
+            $options['duration'] = (isset($criteria['duration']) ? $criteria['duration'] : 60);
+            $options['time'] = time();
+        }
+
         $urlParam = $this->encodeUrlParam($options);
 
         return UrlHelper::getSiteUrl('secureAssetDownload/' . $urlParam);
@@ -97,6 +103,17 @@ class SecureAssetDownloadService extends BaseApplicationComponent
 
       if (!$this->_asset) {
         return false;
+      }
+
+      if ($options['onetime']) {
+          $time = isset($options['duration']) ? $options['duration'] : $key = craft()->plugins->getPlugin("secureAssetDownload")->getSettings()->timeKey;
+          if ( (time() - $options['time']) >= $time ) {
+              throw new Exception(Craft::t("Link Expired"));
+              return false;
+          }
+        //   throw new Exception(Craft::t( time() - $options['time'] . "   " . $time));
+          $options['time'] -= $time;
+        //   throw new Exception(Craft::t("\$options['onetime']: " . $options['onetime'] . " | \$options['time']: " . $options['time'] . " | \$time: " . $time . " | time: " . time() ));
       }
 
       if (!craft()->userSession->isLoggedIn()) {
