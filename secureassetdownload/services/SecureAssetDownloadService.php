@@ -128,9 +128,15 @@ class SecureAssetDownloadService extends BaseApplicationComponent
         }
 
         $_returnGroupIdCheck = true;
+
         foreach ($usersGroupIds as $_groupId) {
           if (!$this->_checkInArray($_groupId, $options['userGroupId'])) {
             $_returnGroupIdCheck = false;
+          } else {
+            // If we find an applicable group jump out so true validation doesn't
+            // get overwritten
+            $_returnGroupIdCheck = true;
+            break;
           }
         }
 
